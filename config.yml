@@ -2,5 +2,8 @@
 # path is the relative path to the workflow in the project root
 ---
 path: workflow
-domain: me.johnpinkerton.alfred2-basecrm
+domain: me.johnpinkerton
 id: alfred2-basecrm
+# If you are using Alfred's advanced Dropbox sync, indicate the path shown in
+# Alfred Preferences > Advanced > Syncing:
+dropbox: ~/Dropbox/Alfred
