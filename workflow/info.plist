@@ -3,141 +3,132 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string>me.zhaowu.alfred2-ruby-template</string>
+	<string>me.johnpinkerton.alfred2-basecrm</string>
+	<key>category</key>
+	<string>Productivity</string>
 	<key>connections</key>
 	<dict>
-		<key>21557827-8003-42B7-A042-16D4C9278FEC</key>
+		<key>7A6987D3-50D3-4D29-ABA1-149892BF9DC4</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>42D05639-3F0F-4760-8214-317167E4173D</string>
+				<string>B0224136-1457-403A-9A28-1FE568184A28</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
 			</dict>
-		</array>
-		<key>BA17BE41-176A-4E9A-B958-A3F0BEA36829</key>
-		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>42D05639-3F0F-4760-8214-317167E4173D</string>
+				<string>712D3E0A-3B7A-4412-8252-F07FE3872C4F</string>
 				<key>modifiers</key>
-				<integer>0</integer>
+				<integer>1048576</integer>
 				<key>modifiersubtext</key>
-				<string></string>
+				<string>Copy to clipboard</string>
 			</dict>
 		</array>
 	</dict>
 	<key>createdby</key>
-	<string>Zhao Cai</string>
+	<string>John Pinkerton</string>
 	<key>description</key>
-	<string>A starting place for developing Ruby based workflow in Alfred</string>
+	<string>Provides easy access to Base CRM contacts, leads, and deals inside Alfred 2 (plus caching!).</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>Ruby Based Workflow Template</string>
+	<string>Base CRM</string>
 	<key>objects</key>
 	<array>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>argumenttype</key>
-				<integer>1</integer>
-				<key>escaping</key>
-				<integer>62</integer>
-				<key>keyword</key>
-				<string>test feedback</string>
-				<key>runningsubtext</key>
-				<string>working...</string>
-				<key>script</key>
-				<string>/usr/bin/ruby ./main.rb {query}</string>
-				<key>subtext</key>
-				<string>Ruby Based Workflow Template</string>
-				<key>title</key>
-				<string>Test Alfred Feedback</string>
-				<key>type</key>
-				<integer>0</integer>
-				<key>withspace</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.scriptfilter</string>
-			<key>uid</key>
-			<string>21557827-8003-42B7-A042-16D4C9278FEC</string>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>lastpathcomponent</key>
+				<key>plusspaces</key>
 				<false/>
-				<key>onlyshowifquerypopulated</key>
-				<true/>
-				<key>output</key>
-				<integer>0</integer>
-				<key>removeextension</key>
-				<false/>
-				<key>sticky</key>
-				<false/>
-				<key>text</key>
+				<key>url</key>
 				<string>{query}</string>
-				<key>title</key>
-				<string>Ruby Script</string>
+				<key>utf8</key>
+				<true/>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.output.notification</string>
+			<string>alfred.workflow.action.openurl</string>
 			<key>uid</key>
-			<string>42D05639-3F0F-4760-8214-317167E4173D</string>
+			<string>B0224136-1457-403A-9A28-1FE568184A28</string>
+			<key>version</key>
+			<integer>0</integer>
 		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
 				<key>argumenttype</key>
-				<integer>2</integer>
+				<integer>0</integer>
 				<key>escaping</key>
-				<integer>63</integer>
+				<integer>0</integer>
 				<key>keyword</key>
-				<string>test rescue feedback</string>
+				<string>ba</string>
 				<key>runningsubtext</key>
-				<string>...</string>
+				<string>loading...</string>
 				<key>script</key>
-				<string>/usr/bin/ruby ./main_with_rescue_feedback.rb {query}</string>
+				<string>basecrm_api_key=[your base crm api key]
+
+/usr/bin/ruby ./main.rb "{query}" $basecrm_api_key
+
+</string>
 				<key>subtext</key>
-				<string>Ruby Based Workflow Template</string>
+				<string>Load Base contacts, deals, and leads</string>
 				<key>title</key>
-				<string>Test Alfred Rescue Feedback</string>
+				<string>Base CRM</string>
 				<key>type</key>
 				<integer>0</integer>
 				<key>withspace</key>
-				<false/>
+				<true/>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
-			<string>BA17BE41-176A-4E9A-B958-A3F0BEA36829</string>
+			<string>7A6987D3-50D3-4D29-ABA1-149892BF9DC4</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>autopaste</key>
+				<false/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>712D3E0A-3B7A-4412-8252-F07FE3872C4F</string>
+			<key>version</key>
+			<integer>0</integer>
 		</dict>
 	</array>
 	<key>readme</key>
-	<string></string>
+	<string>1. Right click on the bc Script Filter and click Configure.
+2. Fill in your Base CRM api key.
+3. Have fun.
+
+This will cache your results, so if you need to refresh start your query with: !</string>
 	<key>uidata</key>
 	<dict>
-		<key>21557827-8003-42B7-A042-16D4C9278FEC</key>
+		<key>712D3E0A-3B7A-4412-8252-F07FE3872C4F</key>
 		<dict>
 			<key>ypos</key>
-			<real>250</real>
+			<real>200</real>
 		</dict>
-		<key>42D05639-3F0F-4760-8214-317167E4173D</key>
+		<key>7A6987D3-50D3-4D29-ABA1-149892BF9DC4</key>
 		<dict>
 			<key>ypos</key>
-			<real>140</real>
+			<real>180</real>
 		</dict>
-		<key>BA17BE41-176A-4E9A-B958-A3F0BEA36829</key>
+		<key>B0224136-1457-403A-9A28-1FE568184A28</key>
 		<dict>
 			<key>ypos</key>
-			<real>370</real>
+			<real>10</real>
 		</dict>
 	</dict>
 	<key>webaddress</key>
-	<string>http://github.com/zhaocai/alfred2-ruby-template</string>
+	<string>http://github.com/johnthepink/alfred2-basecrm</string>
 </dict>
 </plist>
