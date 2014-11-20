@@ -8,7 +8,7 @@ Provides easy access to Base CRM contacts, leads, and deals inside Alfred 2 (plu
 
 Download this [bad boy](https://github.com/johnthepink/alfred2-basecrm/raw/master/alfred2-basecrm.alfredworkflow), and open to install. Then:
 
-1. Right click on the bc Script Filter and click Configure.
+1. Right click on the ba Script Filter and click Configure.
 2. Fill in your Base CRM api key.
 3. Have fun.
 
