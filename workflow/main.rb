@@ -21,12 +21,16 @@ Alfred.with_friendly_error do |alfred|
   QUERY = ARGV[0]
   BASECRM_API_KEY = "#{ARGV[1]}"
 
-  def load_leads(alfred)
+  def load_data(alfred)
 
     session = BaseCrm::Session.new(BASECRM_API_KEY)
     fb = alfred.feedback
 
-    session.leads.all.each do |lead|
+    leads = load_leads(session)
+    contacts = load_contacts(session)
+    deals = load_deals(session)
+
+    leads.each do |lead|
       lead_name = [lead.first_name, lead.last_name].join(" ")
       lead_url = "https://app.futuresimple.com/leads/#{lead.id}"
 
@@ -40,7 +44,7 @@ Alfred.with_friendly_error do |alfred|
       })
     end
 
-    session.contacts.all.each do |contact|
+    contacts.each do |contact|
       contact_url = "https://app.futuresimple.com/crm/contacts/#{contact.id}"
 
       fb.add_item({
@@ -53,7 +57,7 @@ Alfred.with_friendly_error do |alfred|
       })
     end
 
-    session.deals.all.each do |deal|
+    deals.each do |deal|
       deal_url = "https://app.futuresimple.com/sales/deals/#{deal.id}"
 
       fb.add_item({
@@ -69,6 +73,54 @@ Alfred.with_friendly_error do |alfred|
     fb
   end
 
+  def load_leads(session)
+
+    leads = []
+    page = []
+    page_no = 1
+
+    begin
+      page = session.leads.all(page: page_no)
+      leads << page
+      page_no += 1
+    end until page.size < 50
+
+    leads.flatten
+
+  end
+
+  def load_contacts(session)
+
+    contacts = []
+    page = []
+    page_no = 1
+
+    begin
+      page = session.contacts.all(page: page_no)
+      contacts << page
+      page_no += 1
+    end until page.size < 20
+
+    contacts.flatten
+
+  end
+
+  def load_deals(session)
+
+    deals = []
+    page = []
+    page_no = 1
+
+    begin
+      page = session.deals.all(page: page_no)
+      deals << page
+      page_no += 1
+    end until page.size < 20
+
+    deals.flatten
+
+  end
+
   alfred.with_rescue_feedback = true
   alfred.with_cached_feedback do
     use_cache_file :expire => 86400
@@ -78,7 +130,7 @@ Alfred.with_friendly_error do |alfred|
     # cached feedback is valid
     puts fb.to_alfred(ARGV[0])
   else
-    fb = load_leads(alfred)
+    fb = load_data(alfred)
     fb.put_cached_feedback
     puts fb.to_alfred(ARGV[0])
   end
