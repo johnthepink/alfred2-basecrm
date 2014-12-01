@@ -12,14 +12,14 @@ Alfred.with_friendly_error do |alfred|
 
   # prepend ! in query to refresh
   is_refresh = false
-  if ARGV[0].start_with? '!'
+  if ARGV[1].start_with? '!'
     is_refresh = true
-    ARGV[0] = ARGV[0].gsub(/!/, '')
+    ARGV[1] = ARGV[1].gsub(/!/, '')
   end
 
   # contants
-  QUERY = ARGV[0]
-  BASECRM_API_KEY = "#{ARGV[1]}"
+  BASECRM_API_KEY = "#{ARGV[0]}"
+  QUERY = ARGV[1]
 
   def load_data(alfred)
 
@@ -128,11 +128,11 @@ Alfred.with_friendly_error do |alfred|
 
   if !is_refresh and fb = alfred.feedback.get_cached_feedback
     # cached feedback is valid
-    puts fb.to_alfred(ARGV[0])
+    puts fb.to_alfred(ARGV[1])
   else
     fb = load_data(alfred)
     fb.put_cached_feedback
-    puts fb.to_alfred(ARGV[0])
+    puts fb.to_alfred(ARGV[1])
   end
 end
 

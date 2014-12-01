@@ -69,13 +69,13 @@
 				<key>script</key>
 				<string>basecrm_api_key=[your base crm api key]
 
-/usr/bin/ruby ./main.rb "{query}" $basecrm_api_key
+/usr/bin/ruby ./main.rb $basecrm_api_key "{query}"
 
 </string>
 				<key>subtext</key>
 				<string>Load Base contacts, deals, and leads</string>
 				<key>title</key>
-				<string>Base CRM</string>
+				<string>ba {query}</string>
 				<key>type</key>
 				<integer>0</integer>
 				<key>withspace</key>
