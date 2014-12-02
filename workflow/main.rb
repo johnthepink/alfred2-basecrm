@@ -40,6 +40,7 @@ Alfred.with_friendly_error do |alfred|
         :subtitle => 'Lead',
         :arg => lead_url,
         :autocomplete => lead_name,
+        :icon => { :type => "default", :name => "assets/lead.png" },
         :valid => "yes"
       })
     end
@@ -53,6 +54,7 @@ Alfred.with_friendly_error do |alfred|
         :subtitle => contact.is_organisation ? 'Account' : 'Contact',
         :arg => contact_url,
         :autocomplete => contact.name,
+        :icon => { :type => "default", :name => contact.is_organisation ? 'assets/organisation.png' : "assets/contact.png" },
         :valid => "yes"
       })
     end
@@ -66,6 +68,7 @@ Alfred.with_friendly_error do |alfred|
         :subtitle => 'Deal',
         :arg => deal_url,
         :autocomplete => deal.name,
+        :icon => { :type => "default", :name => "assets/deal.png" },
         :valid => "yes"
       })
     end
