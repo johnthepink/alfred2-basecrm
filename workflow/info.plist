@@ -26,6 +26,14 @@
 				<key>modifiersubtext</key>
 				<string>Copy to clipboard</string>
 			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>9BFC2A2D-F301-4E16-9DE9-6877A50B364A</string>
+				<key>modifiers</key>
+				<integer>524288</integer>
+				<key>modifiersubtext</key>
+				<string>Edit this item</string>
+			</dict>
 		</array>
 	</dict>
 	<key>createdby</key>
@@ -52,6 +60,21 @@
 			<string>alfred.workflow.action.openurl</string>
 			<key>uid</key>
 			<string>B0224136-1457-403A-9A28-1FE568184A28</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>autopaste</key>
+				<false/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>712D3E0A-3B7A-4412-8252-F07FE3872C4F</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
@@ -91,15 +114,17 @@
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>autopaste</key>
-				<false/>
-				<key>clipboardtext</key>
-				<string>{query}</string>
+				<key>escaping</key>
+				<integer>0</integer>
+				<key>script</key>
+				<string>open "{query}/edit"</string>
+				<key>type</key>
+				<integer>0</integer>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.output.clipboard</string>
+			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
-			<string>712D3E0A-3B7A-4412-8252-F07FE3872C4F</string>
+			<string>9BFC2A2D-F301-4E16-9DE9-6877A50B364A</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
@@ -115,17 +140,22 @@ This will cache your results, so if you need to refresh start your query with: !
 		<key>712D3E0A-3B7A-4412-8252-F07FE3872C4F</key>
 		<dict>
 			<key>ypos</key>
-			<real>200</real>
+			<real>180</real>
 		</dict>
 		<key>7A6987D3-50D3-4D29-ABA1-149892BF9DC4</key>
 		<dict>
 			<key>ypos</key>
 			<real>180</real>
 		</dict>
+		<key>9BFC2A2D-F301-4E16-9DE9-6877A50B364A</key>
+		<dict>
+			<key>ypos</key>
+			<real>320</real>
+		</dict>
 		<key>B0224136-1457-403A-9A28-1FE568184A28</key>
 		<dict>
 			<key>ypos</key>
-			<real>10</real>
+			<real>50</real>
 		</dict>
 	</dict>
 	<key>webaddress</key>
