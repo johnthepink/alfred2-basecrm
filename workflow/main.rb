@@ -128,11 +128,11 @@ Alfred.with_friendly_error do |alfred|
 
   if !is_refresh and fb = alfred.feedback.get_cached_feedback
     # cached feedback is valid
-    puts fb.to_alfred(ARGV[1])
+    puts fb.to_alfred(QUERY)
   else
     fb = load_data(alfred)
     fb.put_cached_feedback
-    puts fb.to_alfred(ARGV[1])
+    puts fb.to_alfred(QUERY)
   end
 end
 
