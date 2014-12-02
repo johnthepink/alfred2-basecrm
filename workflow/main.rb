@@ -50,7 +50,7 @@ Alfred.with_friendly_error do |alfred|
       fb.add_item({
         :uid => "contact-#{contact.id}",
         :title => contact.name,
-        :subtitle => 'Contact',
+        :subtitle => contact.is_organisation ? 'Account' : 'Contact',
         :arg => contact_url,
         :autocomplete => contact.name,
         :valid => "yes"
