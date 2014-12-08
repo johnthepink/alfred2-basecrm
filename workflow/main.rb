@@ -129,14 +129,16 @@ Alfred.with_friendly_error do |alfred|
     use_cache_file :expire => 86400
   end
 
-  if !is_refresh and fb = alfred.feedback.get_cached_feedback
-    # cached feedback is valid
-    puts fb.to_alfred(QUERY)
-  else
+  fb = alfred.feedback.get_cached_feedback
+
+  if is_refresh or fb.nil?
     fb = load_data(alfred)
     fb.put_cached_feedback
-    puts fb.to_alfred(QUERY)
   end
+
+  puts fb.to_alfred(QUERY)
+
+
 end
 
 
