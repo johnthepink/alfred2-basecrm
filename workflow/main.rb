@@ -19,22 +19,43 @@ Alfred.with_friendly_error do |alfred|
 
   # contants
   BASECRM_API_KEY = "#{ARGV[0]}"
-  QUERY = ARGV[1]
 
-  def load_data(alfred)
+  @session = BaseCrm::Session.new(BASECRM_API_KEY)
+  @query = ARGV[1]
+  @fb = alfred.feedback
 
-    session = BaseCrm::Session.new(BASECRM_API_KEY)
-    fb = alfred.feedback
+  def load_filters()
+    ['lead', 'contact', 'company', 'organisation'].each do |filter|
+      @fb.add_item({
+        :uid => "#{filter}-action",
+        :title => filter.capitalize,
+        :subtitle => "Sort by #{filter}",
+        :autocomplete => filter,
+        :valid => "yes"
+      })
+    end
 
-    leads = load_leads(session)
-    contacts = load_contacts(session)
-    deals = load_deals(session)
+  end
+
+  def load_leads()
+
+    leads = []
+    page = []
+    page_no = 1
+
+    begin
+      page = @session.leads.all(page: page_no)
+      leads << page
+      page_no += 1
+    end until page.size < 50
+
+    leads.flatten!
 
     leads.each do |lead|
       lead_name = [lead.first_name, lead.last_name].join(" ")
       lead_url = "https://app.futuresimple.com/leads/#{lead.id}"
 
-      fb.add_item({
+      @fb.add_item({
         :uid => "lead-#{lead.id}",
         :title => lead_name,
         :subtitle => 'Lead',
@@ -45,10 +66,26 @@ Alfred.with_friendly_error do |alfred|
       })
     end
 
+  end
+
+  def load_contacts()
+
+    contacts = []
+    page = []
+    page_no = 1
+
+    begin
+      page = @session.contacts.all(page: page_no)
+      contacts << page
+      page_no += 1
+    end until page.size < 20
+
+    contacts.flatten!
+
     contacts.each do |contact|
       contact_url = "https://app.futuresimple.com/crm/contacts/#{contact.id}"
 
-      fb.add_item({
+      @fb.add_item({
         :uid => "contact-#{contact.id}",
         :title => contact.name,
         :subtitle => contact.is_organisation ? 'Account' : 'Contact',
@@ -59,10 +96,26 @@ Alfred.with_friendly_error do |alfred|
       })
     end
 
+  end
+
+  def load_deals()
+
+    deals = []
+    page = []
+    page_no = 1
+
+    begin
+      page = @session.deals.all(page: page_no)
+      deals << page
+      page_no += 1
+    end until page.size < 20
+
+    deals.flatten!
+
     deals.each do |deal|
       deal_url = "https://app.futuresimple.com/sales/deals/#{deal.id}"
 
-      fb.add_item({
+      @fb.add_item({
         :uid => "deal-#{deal.id}",
         :title => deal.name,
         :subtitle => 'Deal',
@@ -72,56 +125,6 @@ Alfred.with_friendly_error do |alfred|
         :valid => "yes"
       })
     end
-
-    fb
-  end
-
-  def load_leads(session)
-
-    leads = []
-    page = []
-    page_no = 1
-
-    begin
-      page = session.leads.all(page: page_no)
-      leads << page
-      page_no += 1
-    end until page.size < 50
-
-    leads.flatten
-
-  end
-
-  def load_contacts(session)
-
-    contacts = []
-    page = []
-    page_no = 1
-
-    begin
-      page = session.contacts.all(page: page_no)
-      contacts << page
-      page_no += 1
-    end until page.size < 20
-
-    contacts.flatten
-
-  end
-
-  def load_deals(session)
-
-    deals = []
-    page = []
-    page_no = 1
-
-    begin
-      page = session.deals.all(page: page_no)
-      deals << page
-      page_no += 1
-    end until page.size < 20
-
-    deals.flatten
-
   end
 
   alfred.with_rescue_feedback = true
@@ -129,14 +132,19 @@ Alfred.with_friendly_error do |alfred|
     use_cache_file :expire => 86400
   end
 
-  fb = alfred.feedback.get_cached_feedback
+  @fb = alfred.feedback.get_cached_feedback
 
-  if is_refresh or fb.nil?
-    fb = load_data(alfred)
-    fb.put_cached_feedback
+  if is_refresh or @fb.nil?
+    load_filters()
+    load_leads()
+    load_contacts()
+    load_deals()
+
+    @fb.put_cached_feedback
   end
 
-  puts fb.to_alfred(QUERY)
+
+  puts @fb.to_alfred(@query)
 
 
 end
