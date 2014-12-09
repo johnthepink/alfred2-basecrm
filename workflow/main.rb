@@ -12,30 +12,19 @@ Alfred.with_friendly_error do |alfred|
 
   # prepend ! in query to refresh
   is_refresh = false
-  if ARGV[1].start_with? '!'
+  if ARGV[2].start_with? '!'
     is_refresh = true
-    ARGV[1] = ARGV[1].gsub(/!/, '')
+    ARGV[2] = ARGV[2].gsub(/!/, '')
   end
 
   # contants
   BASECRM_API_KEY = "#{ARGV[0]}"
 
   @session = BaseCrm::Session.new(BASECRM_API_KEY)
-  @query = ARGV[1]
+  @filter = ARGV[1]
+  @query = ARGV[2]
+  @parts = ARGV[2].split(" ")
   @fb = alfred.feedback
-
-  def load_filters()
-    ['lead', 'contact', 'company', 'organisation'].each do |filter|
-      @fb.add_item({
-        :uid => "#{filter}-action",
-        :title => filter.capitalize,
-        :subtitle => "Sort by #{filter}",
-        :autocomplete => filter,
-        :valid => "yes"
-      })
-    end
-
-  end
 
   def load_leads()
 
@@ -135,12 +124,13 @@ Alfred.with_friendly_error do |alfred|
   @fb = alfred.feedback.get_cached_feedback
 
   if is_refresh or @fb.nil?
-    load_filters()
+
     load_leads()
     load_contacts()
     load_deals()
 
     @fb.put_cached_feedback
+
   end
 
 
