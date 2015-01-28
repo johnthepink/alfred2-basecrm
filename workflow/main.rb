@@ -27,6 +27,9 @@ Alfred.with_friendly_error do |alfred|
 
   def load_data()
     results = HTTParty.get(URL,
+      query: {
+        term: QUERY
+      },
       headers: {
         'X-Basecrm-Device-UUID' => UUID,
         'X-Futuresimple-Token' => BASECRM_API_KEY
