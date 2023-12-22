@@ -6,7 +6,7 @@
 require 'rubygems' unless defined? Gem # rubygems is only needed in 1.8
 require "bundle/bundler/setup"
 require "alfred"
-require "basecrm"
+require "httparty"
 
 Alfred.with_friendly_error do |alfred|
 
@@ -20,123 +20,106 @@ Alfred.with_friendly_error do |alfred|
   # contants
   BASECRM_API_KEY = "#{ARGV[0]}"
   QUERY = ARGV[1]
+  URL = 'https://sync.futuresimple.com/api/v1/search.json'
+  UUID = '00AA0000-000A-000A-0000-AAA00A0AAAAA'
 
-  def load_data(alfred)
+  @fb = alfred.feedback
 
-    session = BaseCrm::Session.new(BASECRM_API_KEY)
-    fb = alfred.feedback
+  def load_data()
+    results = HTTParty.get(URL,
+      query: {
+        term: QUERY
+      },
+      headers: {
+        'X-Basecrm-Device-UUID' => UUID,
+        'X-Futuresimple-Token' => BASECRM_API_KEY
+      }
+    )
 
-    leads = load_leads(session)
-    contacts = load_contacts(session)
-    deals = load_deals(session)
-
-    leads.each do |lead|
-      lead_name = [lead.first_name, lead.last_name].join(" ")
-      lead_url = "https://app.futuresimple.com/leads/#{lead.id}"
-
-      fb.add_item({
-        :uid => "lead-#{lead.id}",
-        :title => lead_name,
-        :subtitle => 'Lead',
-        :arg => lead_url,
-        :autocomplete => lead_name,
-        :icon => { :type => "default", :name => "assets/lead.png" },
-        :valid => "yes"
-      })
+    results.each do |result|
+      case result["metadata"]["data_type"]
+      when "Deal"
+        add_deal(result)
+      when "Lead"
+        add_lead(result)
+      when "Contact"
+        if is_company?(result)
+          add_company(result)
+        else
+          add_contact(result)
+        end
+      end
     end
-
-    contacts.each do |contact|
-      contact_url = "https://app.futuresimple.com/crm/contacts/#{contact.id}"
-
-      fb.add_item({
-        :uid => "contact-#{contact.id}",
-        :title => contact.name,
-        :subtitle => contact.is_organisation ? 'Account' : 'Contact',
-        :arg => contact_url,
-        :autocomplete => contact.name,
-        :icon => { :type => "default", :name => contact.is_organisation ? 'assets/organisation.png' : "assets/contact.png" },
-        :valid => "yes"
-      })
-    end
-
-    deals.each do |deal|
-      deal_url = "https://app.futuresimple.com/sales/deals/#{deal.id}"
-
-      fb.add_item({
-        :uid => "deal-#{deal.id}",
-        :title => deal.name,
-        :subtitle => 'Deal',
-        :arg => deal_url,
-        :autocomplete => deal.name,
-        :icon => { :type => "default", :name => "assets/deal.png" },
-        :valid => "yes"
-      })
-    end
-
-    fb
   end
 
-  def load_leads(session)
-
-    leads = []
-    page = []
-    page_no = 1
-
-    begin
-      page = session.leads.all(page: page_no)
-      leads << page
-      page_no += 1
-    end until page.size < 50
-
-    leads.flatten
-
+  def add_basecrm_item(uid, title, type, url)
+    @fb.add_item({
+      :uid => uid,
+      :title => title,
+      :subtitle => type.capitalize,
+      :arg => url,
+      :autocomplete => title,
+      :icon => { :type => "default", :name => "assets/#{type}.png" },
+      :valid => "yes"
+    })
   end
 
-  def load_contacts(session)
+  def add_deal(result)
+    uid = "#{result["metadata"]["data_type"]}-#{result["data"]["id"]}"
+    title = result["data"]["name"]
+    url = "https://app.futuresimple.com/sales/deals/#{result["data"]["id"]}"
 
-    contacts = []
-    page = []
-    page_no = 1
-
-    begin
-      page = session.contacts.all(page: page_no)
-      contacts << page
-      page_no += 1
-    end until page.size < 20
-
-    contacts.flatten
-
+    add_basecrm_item(uid, title, "deal", url)
   end
 
-  def load_deals(session)
+  def add_lead(result)
+    uid = "#{result["metadata"]["data_type"]}-#{result["data"]["id"]}"
+    if result["data"]["first_name"].nil?
+      title = result["data"]["company_name"]
+    else
+      title = "#{result["data"]["first_name"]} #{result["data"]["last_name"]}"
+    end
+    url = "https://app.futuresimple.com/leads/#{result["data"]["id"]}"
 
-    deals = []
-    page = []
-    page_no = 1
+    add_basecrm_item(uid, title, "lead", url)
+  end
 
-    begin
-      page = session.deals.all(page: page_no)
-      deals << page
-      page_no += 1
-    end until page.size < 20
+  def add_contact(result)
+    uid = "#{result["metadata"]["data_type"]}-#{result["data"]["id"]}"
+    title = "#{result["data"]["first_name"]} #{result["data"]["last_name"]}"
+    url = "https://app.futuresimple.com/crm/contacts/#{result["data"]["id"]}"
 
-    deals.flatten
+    add_basecrm_item(uid, title, "contact", url)
+  end
 
+  def add_company(result)
+    uid = "#{result["metadata"]["data_type"]}-#{result["data"]["id"]}"
+    title = result["data"]["name"]
+    url = "https://app.futuresimple.com/crm/contacts/#{result["data"]["id"]}"
+
+    add_basecrm_item(uid, title, "company", url)
+  end
+
+  def is_company?(result)
+    result["data"]["first_name"].nil?
   end
 
   alfred.with_rescue_feedback = true
-  alfred.with_cached_feedback do
-    use_cache_file :expire => 86400
-  end
+  # alfred.with_cached_feedback do
+  #   use_cache_file :expire => 86400
+  # end
 
-  if !is_refresh and fb = alfred.feedback.get_cached_feedback
-    # cached feedback is valid
-    puts fb.to_alfred(QUERY)
-  else
-    fb = load_data(alfred)
-    fb.put_cached_feedback
-    puts fb.to_alfred(QUERY)
-  end
+  load_data()
+  puts @fb.to_alfred(QUERY)
+
+  # if !is_refresh and fb = alfred.feedback.get_cached_feedback
+  #   # cached feedback is valid
+  #   puts fb.to_alfred(QUERY)
+  # else
+  #   fb = load_data(alfred)
+  #   fb.put_cached_feedback
+  #   puts fb.to_alfred(QUERY)
+  # end
 end
 
 
